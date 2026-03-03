@@ -9,7 +9,6 @@
 
   <header>
     <h1><span class="crossed">Auto</span> Over-Correct</h1>
-    <button class="gear" id="gear-btn" title="Settings">⚙</button>
   </header>
 
   <!-- Dial -->
@@ -28,8 +27,8 @@
   <!-- Apply button -->
   <button class="apply-btn" id="apply-btn">Apply to page ↵</button>
 
-  <!-- Settings (hidden by default) -->
-  <section class="settings" id="settings" hidden>
+  <!-- Settings -->
+  <section class="settings" id="settings">
     <div class="setting-row">
       <label>API type</label>
       <select id="api-type">
@@ -47,7 +46,7 @@
     </div>
     <div class="setting-row">
       <label>Model</label>
-      <input type="text" id="api-model" placeholder="claude-haiku-4-5-20251001">
+      <select id="api-model"></select>
     </div>
     <button class="save-btn" id="save-btn">Save</button>
     <p class="hint">

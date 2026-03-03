@@ -69,12 +69,26 @@ Any model Ollama supports will work. Slower models lean into the experience.
 
 Install the extension and Over-Correct any text field on any website.
 
-**Setup:**
+**Chrome / Chromium:**
 1. Open `chrome://extensions`, enable **Developer mode**.
 2. Click **Load unpacked**, select the `extension/` folder.
-3. Click the **OC** toolbar icon → **⚙** → enter your API key:
-   - **Anthropic key** (`sk-ant-…`): calls Claude directly, no CORS issue.
-   - **OpenAI-compatible** + base URL: works with OpenRouter, Groq, or local Ollama.
+
+**Firefox (121+):**
+1. The `extension/` folder ships with `manifest.json` set up for Firefox. If you've been using it with Chrome, swap the manifests first:
+   ```bash
+   mv extension/manifest.json extension/manifest-chrome.json
+   mv extension/manifest-chrome.json extension/manifest.json   # if it doesn't exist yet
+   ```
+   (The repo default has the Firefox manifest as `manifest.json` and the Chrome one as `manifest-chrome.json`.)
+2. Open `about:debugging` → **This Firefox** → **Load Temporary Add-on…**
+3. Select any file inside the `extension/` folder (e.g. `manifest.json`).
+
+> Note: to switch between browsers, rename `manifest-chrome.json` ↔ `manifest.json` as needed. The two manifests are identical except for the background script format (service worker vs. scripts).
+
+**After installing (both browsers):**
+- Click the **OC** toolbar icon → **⚙** → enter your API key:
+  - **Anthropic key** (`sk-ant-…`): calls Claude directly, no CORS issue.
+  - **OpenAI-compatible** + base URL: works with OpenRouter, Groq, or local Ollama.
 
 **Usage:**
 - Focus any text field on any page — a small **OC** badge appears.
@@ -118,7 +132,8 @@ frontend/                   Static web app (the whole app — no build step)
   app.js                    Chaos engine, prompt builder, Ollama + Netlify streaming
 
 extension/                  Browser extension (Manifest V3, no build step)
-  manifest.json
+  manifest.json             Firefox manifest (background.scripts)
+  manifest-chrome.json      Chrome manifest (background.service_worker)
   background.js             Service worker: LLM calls (Anthropic / OpenAI-compat)
   content.js                Floating badge, text-field manipulation
   popup.html/css/js         Dial UI + settings
@@ -150,4 +165,4 @@ backend/                    Optional Python server (serves static files locally)
 | 3–6 | Meaning extraction from noise — hallucination starts |
 | 6–10 | Input is entropy; random output form assigned (haiku, legal disclaimer, pirate's log, ransom note, …) |
 
-**Streaming**: the web app uses `fetch` with a `ReadableStream` reader. The extension uses a Chrome runtime port between the content script and background service worker. Both update the UI token-by-token.
+**Streaming**: the web app uses `fetch` with a `ReadableStream` reader. The extension uses a runtime port between the content script and background script (service worker on Chrome, event page on Firefox). Both update the UI token-by-token.

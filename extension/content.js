@@ -13,13 +13,14 @@ const shadow = host.attachShadow({ mode: 'closed' });
 const styleEl = document.createElement('style');
 styleEl.textContent = `
   :host { all: initial; }
+  .wrapper { position: relative; display: inline-block; }
   .badge {
-    display: flex; align-items: center; gap: 5px;
+    display: flex; align-items: center; gap: 6px;
     background: #1a1710; border: 1px solid #38311e;
-    border-radius: 20px; padding: 4px 10px 4px 7px;
-    font: 500 11px/1 'Courier New', monospace;
+    border-radius: 20px; padding: 6px 13px 6px 10px;
+    font: 500 13px/1 'Courier New', monospace;
     color: #ede8d8; cursor: pointer; pointer-events: all;
-    user-select: none; transition: border-color .15s, opacity .15s;
+    user-select: none;
     box-shadow: 0 2px 8px rgba(0,0,0,.5);
     opacity: 0; transform: translateY(4px);
     transition: opacity .15s, transform .15s, border-color .15s;
@@ -27,7 +28,7 @@ styleEl.textContent = `
   .badge.visible  { opacity: 1; transform: translateY(0); }
   .badge.spinning .dot { animation: spin .6s linear infinite; }
   .dot {
-    width: 8px; height: 8px; border-radius: 50%;
+    width: 10px; height: 10px; border-radius: 50%;
     background: #e8b84b; flex-shrink: 0;
     transition: background .3s;
   }
@@ -35,20 +36,81 @@ styleEl.textContent = `
   .dot.hallucinate { background: #b57bf7; }
   .dot.neutral     { background: #7a6d55; }
   @keyframes spin { to { transform: rotate(360deg); border-radius: 2px; } }
+  .popover {
+    position: absolute; bottom: calc(100% + 8px); right: 0;
+    background: #1a1710; border: 1px solid #38311e;
+    border-radius: 12px; padding: 10px 14px;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    opacity: 0; pointer-events: none; transform: translateY(4px);
+    transition: opacity .15s, transform .15s;
+  }
+  .popover.open { opacity: 1; pointer-events: all; transform: translateY(0); }
+  .vdial-lbl {
+    font: italic 500 9px/1 'Courier New', monospace; color: #7a6d55;
+  }
+  .vdial-lbl.top { color: #b57bf7; }
+  .vdial-lbl.bot { color: #e05a38; }
+  .vdial-row { display: flex; align-items: center; gap: 10px; }
+  .vdial-val {
+    font: 700 13px/1 'Courier New', monospace; color: #ede8d8; min-width: 30px;
+  }
+  input[type=range].vdial {
+    writing-mode: vertical-lr; direction: rtl;
+    -webkit-appearance: none; appearance: none;
+    width: 14px; height: 160px;
+    background: linear-gradient(to bottom, #b57bf7 0%, #e8b84b 25%, #221e14 50%, #e05a38 100%);
+    border-radius: 7px; outline: none; cursor: pointer;
+  }
+  input[type=range].vdial::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: #ede8d8; border: 3px solid #0f0d09;
+    box-shadow: 0 0 0 2px #e8b84b; cursor: grab;
+  }
+  input[type=range].vdial::-webkit-slider-thumb:active { cursor: grabbing; }
+  input[type=range].vdial::-moz-range-thumb {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: #ede8d8; border: 3px solid #0f0d09;
+    box-shadow: 0 0 0 2px #e8b84b; cursor: grab;
+  }
 `;
 shadow.appendChild(styleEl);
+
+const wrapper = document.createElement('div');
+wrapper.className = 'wrapper';
+shadow.appendChild(wrapper);
 
 const badge = document.createElement('div');
 badge.className = 'badge';
 badge.innerHTML = '<span class="dot"></span><span class="label">OC</span>';
-shadow.appendChild(badge);
+wrapper.appendChild(badge);
 
 const dot   = badge.querySelector('.dot');
 const label = badge.querySelector('.label');
 
+const popover = document.createElement('div');
+popover.className = 'popover';
+popover.innerHTML = `
+  <span class="vdial-lbl top">hallucinate</span>
+  <div class="vdial-row">
+    <input type="range" class="vdial" min="-10" max="10" step="0.5" value="1">
+    <span class="vdial-val">+1</span>
+  </div>
+  <span class="vdial-lbl bot">chaos</span>
+`;
+wrapper.appendChild(popover);
+
+const vdial    = popover.querySelector('.vdial');
+const vdialVal = popover.querySelector('.vdial-val');
+
+function updateVdialDisplay(val) {
+  vdialVal.textContent = (val > 0 ? '+' : '') + val;
+}
+
 // ─── Badge positioning ─────────────────────────────────────────────
 let activeEl = null;
 let rafId    = null;
+let pinned   = false;
 
 function positionBadge() {
   if (!activeEl || !document.contains(activeEl)) { hideBadge(); return; }
@@ -68,6 +130,7 @@ function showBadge(el) {
 }
 
 function hideBadge() {
+  if (pinned || popover.classList.contains('open')) return;
   badge.classList.remove('visible');
   activeEl = null;
 }
@@ -91,10 +154,7 @@ document.addEventListener('focusin', (e) => {
 }, true);
 
 document.addEventListener('focusout', () => {
-  // Small delay so a click on the badge doesn't immediately hide it
-  setTimeout(() => {
-    if (!shadow.contains(document.activeElement)) hideBadge();
-  }, 150);
+  setTimeout(hideBadge, 400);
 }, true);
 
 // ─── Read / write text fields ──────────────────────────────────────
@@ -198,8 +258,48 @@ function flashBadge(state) {
   setTimeout(() => { badge.style.borderColor = ''; }, 600);
 }
 
+// ─── Badge hover: pin while mouse is over badge/popover ────────────
+badge.addEventListener('mouseenter',   () => { pinned = true; });
+wrapper.addEventListener('mouseleave', () => {
+  pinned = false;
+  setTimeout(hideBadge, 400);
+});
+
 // ─── Badge click ───────────────────────────────────────────────────
 badge.addEventListener('click', () => triggerOverCorrect());
+
+// ─── Badge right-click: vertical dial picker ───────────────────────
+badge.addEventListener('contextmenu', async (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  if (!popover.classList.contains('open')) {
+    const { dial = 1 } = await chrome.storage.sync.get('dial');
+    const v = parseFloat(dial);
+    vdial.value = v;
+    updateVdialDisplay(v);
+  }
+  popover.classList.toggle('open');
+});
+
+vdial.addEventListener('input', async () => {
+  const val = parseFloat(vdial.value);
+  updateVdialDisplay(val);
+  await chrome.storage.sync.set({ dial: val });
+  syncDotColor();
+});
+
+// Stop propagation so document click doesn't immediately close the popover
+popover.addEventListener('pointerdown', (e) => e.stopPropagation());
+popover.addEventListener('click',       (e) => e.stopPropagation());
+
+document.addEventListener('click', () => {
+  popover.classList.remove('open');
+  setTimeout(hideBadge, 400);
+});
+document.addEventListener('contextmenu', () => {
+  popover.classList.remove('open');
+  setTimeout(hideBadge, 400);
+});
 
 // ─── Update badge dot color when dial changes ──────────────────────
 async function syncDotColor() {

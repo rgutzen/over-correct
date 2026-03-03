@@ -48,18 +48,6 @@ h1 .crossed {
   font-weight: 400;
 }
 
-.gear {
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--muted);
-  font-size: 1rem;
-  width: 28px; height: 28px;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: color .15s, border-color .15s;
-}
-.gear:hover { color: var(--text); border-color: var(--text); }
 
 /* ─── Dial ───── */
 .dial-section {

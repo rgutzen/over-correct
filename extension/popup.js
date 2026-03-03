@@ -2,15 +2,51 @@
 
 const dialEl    = document.getElementById('dial');
 const modeLabel = document.getElementById('mode-label');
-const gearBtn   = document.getElementById('gear-btn');
 const applyBtn  = document.getElementById('apply-btn');
-const settings  = document.getElementById('settings');
 const apiTypeEl = document.getElementById('api-type');
 const apiKeyEl  = document.getElementById('api-key');
 const apiUrlEl  = document.getElementById('api-url');
 const modelEl   = document.getElementById('api-model');
 const rowUrl    = document.getElementById('row-url');
 const saveBtn   = document.getElementById('save-btn');
+
+const MODELS = {
+  anthropic: [
+    'claude-haiku-4-5-20251001',
+    'claude-sonnet-4-6',
+    'claude-opus-4-6',
+  ],
+  openai: [
+    'llama3.2',
+    'llama3.1:8b',
+    'mistral',
+    'gemma2',
+    'phi3',
+    'mixtral:8x7b',
+    'gpt-4o-mini',
+    'gpt-4o',
+  ],
+};
+
+function populateModels(apiType, savedModel) {
+  const options = MODELS[apiType] ?? MODELS.anthropic;
+  modelEl.innerHTML = '';
+  options.forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m;
+    opt.textContent = m;
+    if (m === savedModel) opt.selected = true;
+    modelEl.appendChild(opt);
+  });
+  // If saved model isn't in list, add it as selected option
+  if (savedModel && !options.includes(savedModel)) {
+    const opt = document.createElement('option');
+    opt.value = savedModel;
+    opt.textContent = savedModel;
+    opt.selected = true;
+    modelEl.insertBefore(opt, modelEl.firstChild);
+  }
+}
 
 // ─── Dial mode labels ──────────────────────────────────────────────
 const MODES = [
@@ -37,11 +73,12 @@ chrome.storage.sync.get(['dial', 'apiType', 'apiKey', 'apiUrl', 'model'], (store
   dialEl.value = v;
   updateMode(v);
 
-  apiTypeEl.value = stored.apiType ?? 'anthropic';
-  apiKeyEl.value  = stored.apiKey  ?? '';
-  apiUrlEl.value  = stored.apiUrl  ?? '';
-  modelEl.value   = stored.model   ?? '';
-  rowUrl.style.display = apiTypeEl.value === 'openai' ? '' : 'none';
+  const apiType = stored.apiType ?? 'anthropic';
+  apiTypeEl.value = apiType;
+  apiKeyEl.value  = stored.apiKey ?? '';
+  apiUrlEl.value  = stored.apiUrl ?? '';
+  rowUrl.style.display = apiType === 'openai' ? '' : 'none';
+  populateModels(apiType, stored.model ?? '');
 });
 
 // ─── Dial interaction ──────────────────────────────────────────────
@@ -51,13 +88,9 @@ dialEl.addEventListener('input', () => {
   chrome.storage.sync.set({ dial: v });
 });
 
-// ─── Settings panel toggle ─────────────────────────────────────────
-gearBtn.addEventListener('click', () => {
-  settings.hidden = !settings.hidden;
-});
-
 apiTypeEl.addEventListener('change', () => {
   rowUrl.style.display = apiTypeEl.value === 'openai' ? '' : 'none';
+  populateModels(apiTypeEl.value, '');
 });
 
 // ─── Save settings ─────────────────────────────────────────────────
