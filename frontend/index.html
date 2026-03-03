@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Over-Correct</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <div class="header-top">
+      <h1><span class="crossed">Auto</span> Over-Correct</h1>
+      <button class="settings-btn" id="settings-btn" title="LLM settings">⚙</button>
+    </div>
+  </header>
+
+  <div class="settings-panel hidden" id="settings-panel">
+    <div class="settings-row">
+      <label for="backend-select">LLM backend</label>
+      <select id="backend-select">
+        <option value="ollama">Ollama (local)</option>
+        <option value="netlify">Claude Haiku (online)</option>
+      </select>
+    </div>
+    <div id="ollama-settings">
+      <div class="settings-row">
+        <label for="ollama-url">Ollama URL</label>
+        <input type="text" id="ollama-url" placeholder="http://localhost:11434" spellcheck="false">
+      </div>
+      <div class="settings-row">
+        <label for="ollama-model">Model</label>
+        <input type="text" id="ollama-model" placeholder="llama3.2" spellcheck="false">
+      </div>
+    </div>
+    <button id="settings-save" class="settings-save-btn">Save</button>
+  </div>
+
+  <main>
+
+    <!-- Single overlay editor -->
+    <div class="editor-container">
+      <div class="pane input-pane">
+        <textarea
+          id="input"
+          placeholder="Type anything here…&#10;&#10;Gibberish, typos, random keys, nonsense.&#10;The dial decides what happens next."
+          spellcheck="false"
+          autocomplete="off"
+        ></textarea>
+      </div>
+      <div class="pane output-pane">
+        <div id="output" class="output-display" aria-live="polite"></div>
+        <button id="copy-btn" class="copy-btn" title="Copy output to clipboard">⎘ copy</button>
+      </div>
+    </div>
+
+    <!-- Dial -->
+    <div class="dial-container">
+      <div class="dial-labels">
+        <span class="dial-label chaos">◀ chaos</span>
+        <span class="dial-label neutral">pass-through</span>
+        <span class="dial-label correct">correct ▶</span>
+        <span class="dial-label hallucinate">hallucinate ▶▶</span>
+      </div>
+      <input type="range" id="dial" min="-10" max="10" step="0.1" value="1">
+      <div class="dial-value-row">
+        <span class="dial-mode-label" id="dial-mode">standard autocorrect</span>
+      </div>
+    </div>
+
+    <!-- Status -->
+    <div class="status-bar">
+      <span id="status">ready — Ollama at localhost:11434</span>
+      <span id="spinner" class="spinner hidden"></span>
+    </div>
+
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/diff_match_patch/20121119/diff_match_patch.js"
+          crossorigin="anonymous"></script>
+  <script src="app.js"></script>
+</body>
+</html>

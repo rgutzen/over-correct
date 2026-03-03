@@ -1,0 +1,156 @@
+/* Over-Correct — popup */
+
+:root {
+  --bg:          #0f0d09;
+  --surface:     #1a1710;
+  --surface2:    #221e14;
+  --border:      #38311e;
+  --text:        #ede8d8;
+  --muted:       #7a6d55;
+  --accent:      #e8b84b;
+  --chaos:       #e05a38;
+  --hallucinate: #b57bf7;
+  --radius:      6px;
+  --mono:        'Courier New', Courier, monospace;
+  --serif:       Georgia, serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--serif);
+  width: 340px;
+  padding: 0 0 4px;
+}
+
+/* ─── Header ───── */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: .02em;
+}
+
+h1 .crossed {
+  text-decoration: line-through;
+  opacity: .4;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.gear {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--muted);
+  font-size: 1rem;
+  width: 28px; height: 28px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: color .15s, border-color .15s;
+}
+.gear:hover { color: var(--text); border-color: var(--text); }
+
+/* ─── Dial ───── */
+.dial-section {
+  padding: 14px 16px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dial-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: .68rem;
+  font-style: italic;
+  color: var(--muted);
+}
+.dial-labels .chaos       { color: var(--chaos); }
+.dial-labels .hallucinate { color: var(--hallucinate); }
+
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%; height: 14px;
+  background: linear-gradient(to right, var(--chaos) 0%, var(--surface2) 50%, var(--accent) 75%, var(--hallucinate) 100%);
+  border-radius: 7px; outline: none; cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px; height: 22px;
+  background: var(--text); border-radius: 50%;
+  border: 3px solid var(--bg);
+  box-shadow: 0 0 0 2px var(--accent);
+  cursor: grab; transition: box-shadow .15s;
+}
+input[type="range"]::-webkit-slider-thumb:active { cursor: grabbing; }
+
+.mode-row { text-align: center; }
+.mode-label {
+  font-style: italic; font-size: .82rem; color: var(--accent);
+  transition: color .3s;
+}
+.mode-label.chaos-mode       { color: var(--chaos); }
+.mode-label.hallucinate-mode { color: var(--hallucinate); }
+.mode-label.neutral-mode     { color: var(--muted); }
+
+/* ─── Apply button ───── */
+.apply-btn {
+  display: block; width: calc(100% - 32px); margin: 0 16px 12px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); color: var(--text);
+  font-family: var(--serif); font-size: .82rem;
+  padding: .45rem; cursor: pointer; transition: border-color .15s;
+}
+.apply-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ─── Settings ───── */
+.settings {
+  border-top: 1px solid var(--border);
+  padding: 12px 16px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+.setting-row {
+  display: flex; flex-direction: column; gap: 3px;
+}
+.setting-row label {
+  font-style: italic; font-size: .7rem; color: var(--muted);
+}
+.setting-row input,
+.setting-row select {
+  font-family: var(--mono); font-size: .78rem;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 1px); color: var(--text);
+  padding: .35rem .6rem; outline: none;
+}
+.setting-row input:focus,
+.setting-row select:focus { border-color: var(--accent); }
+
+.save-btn {
+  font-family: var(--serif); font-size: .82rem;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 1px); color: var(--text);
+  padding: .4rem; cursor: pointer; margin-top: 4px;
+  transition: border-color .15s, color .15s;
+}
+.save-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.hint {
+  font-size: .68rem; color: var(--muted); line-height: 1.55;
+}
+.hint code, .hint kbd {
+  font-family: var(--mono); font-size: .68rem;
+  background: var(--surface2); padding: 1px 4px;
+  border-radius: 3px;
+}

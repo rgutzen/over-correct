@@ -1,0 +1,365 @@
+/* ─── Reset & base ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:           #0f0d09;
+  --surface:      #1a1710;
+  --surface2:     #221e14;
+  --border:       #38311e;
+  --text:         #ede8d8;
+  --muted:        #7a6d55;
+  --accent:       #e8b84b;
+  --chaos:        #e05a38;
+  --hallucinate:  #b57bf7;
+  --del-bg:       rgba(224, 90, 56, 0.18);
+  --del-text:     #e8846a;
+  --ins-bg:       rgba(232, 184, 75, 0.18);
+  --ins-text:     #e8b84b;
+  --font-mono:    'Courier Prime', 'Courier New', Courier, monospace;
+  --font-serif:   'Lora', Georgia, serif;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --radius:       8px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-serif);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+}
+
+/* ─── Header ───────────────────────────────────────────────────── */
+header {
+  width: 100%;
+  max-width: 1100px;
+  margin-bottom: 1.5rem;
+}
+
+.header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+h1 {
+  font-family: var(--font-display);
+  font-size: 2.8rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--accent);
+  text-shadow: 0 0 30px rgba(232, 184, 75, 0.2);
+  line-height: 1.1;
+}
+
+h1 .crossed {
+  text-decoration: line-through;
+  opacity: 0.4;
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* ─── Settings button ──────────────────────────────────────────── */
+.settings-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--muted);
+  font-size: 1.1rem;
+  width: 2.2rem;
+  height: 2.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s, border-color 0.15s;
+  margin-top: 0.4rem;
+  flex-shrink: 0;
+}
+.settings-btn:hover { color: var(--text); border-color: var(--text); }
+
+/* ─── Settings panel ───────────────────────────────────────────── */
+.settings-panel {
+  width: 100%;
+  max-width: 1100px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.5rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+}
+.settings-panel.hidden { display: none; }
+
+.settings-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+  min-width: 180px;
+}
+
+.settings-row label {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.settings-row input,
+.settings-row select {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 2px);
+  color: var(--text);
+  padding: 0.4rem 0.7rem;
+  outline: none;
+}
+.settings-row select { cursor: pointer; }
+.settings-row input:focus,
+.settings-row select:focus { border-color: var(--accent); }
+
+#ollama-settings {
+  display: contents; /* transparent wrapper, children join the flex layout */
+}
+
+.settings-save-btn {
+  font-family: var(--font-serif);
+  font-size: 0.85rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 2px);
+  color: var(--text);
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.settings-save-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ─── Main layout ──────────────────────────────────────────────── */
+main {
+  width: 100%;
+  max-width: 1100px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+/* ─── Editor: minimal overlay layout ──────────────────────────── */
+.editor-container {
+  position: relative;
+}
+
+.pane { position: relative; }
+
+/* Output pane floats over the input pane */
+.output-pane {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+textarea {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  line-height: 1.7;
+  /* Dimmed: the typed text recedes into the background */
+  color: rgba(237, 232, 216, 0.22);
+  caret-color: rgba(237, 232, 216, 0.65);
+  background: var(--bg);
+  border: none;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  resize: vertical;
+  min-height: 380px;
+  width: 100%;
+  padding: 2rem 2.5rem;
+  tab-size: 2;
+  outline: none;
+}
+textarea:focus { border-bottom-color: var(--muted); }
+
+/* Output overlaid on top, bright */
+.output-display {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  line-height: 1.7;
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  border: none;
+  color: rgba(237, 232, 216, 0.92);
+  padding: 2rem 2.5rem;
+  min-height: 380px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* ─── Diff styles ──────────────────────────────────────────────── */
+del {
+  background: var(--del-bg);
+  color: var(--del-text);
+  text-decoration: line-through;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+ins {
+  background: var(--ins-bg);
+  color: var(--ins-text);
+  text-decoration: none;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+/* ─── Copy button ──────────────────────────────────────────────── */
+.copy-btn {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--muted);
+  font-family: var(--font-serif);
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  cursor: pointer;
+  pointer-events: all;
+  transition: color 0.15s, border-color 0.15s;
+  z-index: 10;
+}
+.copy-btn:hover { color: var(--text); border-color: var(--text); }
+
+/* ─── Dial ─────────────────────────────────────────────────────── */
+.dial-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.dial-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  font-family: var(--font-serif);
+  font-style: italic;
+  letter-spacing: 0.02em;
+  padding: 0 2px;
+}
+.dial-label.chaos       { color: var(--chaos); }
+.dial-label.neutral     { color: var(--muted); }
+.dial-label.correct     { color: var(--accent); }
+.dial-label.hallucinate { color: var(--hallucinate); }
+
+/* Wider dial bar (from basic design) */
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 14px;
+  background: linear-gradient(
+    to right,
+    var(--chaos) 0%,
+    var(--surface2) 50%,
+    var(--accent) 75%,
+    var(--hallucinate) 100%
+  );
+  border-radius: 7px;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 26px;
+  height: 26px;
+  background: var(--text);
+  border-radius: 50%;
+  border: 3px solid var(--bg);
+  box-shadow: 0 0 0 2px var(--accent);
+  cursor: grab;
+  transition: box-shadow 0.15s;
+}
+input[type="range"]::-webkit-slider-thumb:active { cursor: grabbing; }
+input[type="range"]:focus::-webkit-slider-thumb   { box-shadow: 0 0 0 3px var(--accent); }
+
+/* Firefox */
+input[type="range"]::-moz-range-thumb {
+  width: 26px;
+  height: 26px;
+  background: var(--text);
+  border-radius: 50%;
+  border: 3px solid var(--bg);
+  box-shadow: 0 0 0 2px var(--accent);
+  cursor: grab;
+}
+
+.dial-value-row {
+  display: flex;
+  align-items: center;
+  margin-top: 0.1rem;
+}
+
+.dial-mode-label {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 0.9rem;
+  color: var(--accent);
+  transition: color 0.3s;
+}
+.dial-mode-label.chaos-mode       { color: var(--chaos); }
+.dial-mode-label.hallucinate-mode { color: var(--hallucinate); }
+.dial-mode-label.neutral-mode     { color: var(--muted); }
+
+/* ─── Status bar ───────────────────────────────────────────────── */
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 0.75rem;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+
+.spinner {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--muted);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+.spinner.hidden { display: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── Cursor blink ─────────────────────────────────────────────── */
+.cursor { color: var(--accent); animation: blink 0.8s step-end infinite; }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+/* ─── Responsive ───────────────────────────────────────────────── */
+@media (max-width: 700px) {
+  h1 { font-size: 1.8rem; }
+  .dial-labels { font-size: 0.65rem; }
+  textarea, .output-display {
+    font-size: 0.95rem;
+    padding: 1.2rem 1.5rem;
+  }
+}

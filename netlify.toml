@@ -1,0 +1,18 @@
+[build]
+  # No build step needed — pure static files
+  publish = "frontend"
+
+# Cache fonts and static assets aggressively
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Let browsers make cross-origin requests to localhost:11434 (Ollama)
+# Note: Netlify headers only affect responses FROM Netlify, not from Ollama.
+# Users must start Ollama with: OLLAMA_ORIGINS=* ollama serve
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"

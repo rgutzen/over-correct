@@ -1,0 +1,18 @@
+
+# Over-Correct
+
+I'm doing a "Stupid Hackathon" with the following idea that you are gonna help me realize.
+Autocorrect can be a nuissance but also an immense help. Let's take it to the extremes and make it absurd. So, I want to create an autocorrect function with a dial that when set on 0, it doesn't do anything, on 1 it applies a standard autocorrect, but it can also go beyond that and for values >1 it becomes increasingly aggressive in interpreting the input (like a hallucinating GAN, or diffusion model) so that you can input completely incomprehensible nonsense and it will still correct it to something intelligble, which may be text in any (consistent) language, code, or even ascii art (the extend of allowed content types could be user settings). When the dial goes < 0, however, it starts introducing typos and with larger negative values messes with the input more and more.
+Ideally, I'd like to codebase to be python based, and it could take the form of a webapp or a plugin for vscode or another text editor.
+To get started meditate on this concept and help me refining it by exploring different implementation details and features, and asking me clarifying questions.
+
+
+Interfaces:
+I want to explore different GUI interfaces. So, enable to have several interchangeable interface designs. Keep the current one as "basic", and add a new one:
+- sleek stylish minimalistic look with the a single text window. The typed text appears in grey and the generated text is overlayed in white (assuming dark background).
+
+Improve on the design:
+- Rename the tool to Over-Correct (can be displayed as ~Auto~(crossed out) Over-Correct)
+- settle on one single interface design. Use mostly the minimal design, but use the wider dial bar from the basic design (but without the numbers, and additional labels)
+- Write a proper Readme that capture the idea, usage, details, and "stupid" philosophy of the project.
+- think about how to deploy this prototype on the web. E.g. using a service like netlify, keeping in mind that it doesn't really support a backend. By default it should use Ollama.

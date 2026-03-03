@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "Over-Correct",
+  "version": "0.1.0",
+  "description": "Autocorrect on a dial. Chaos at −10. Hallucination at +10.",
+
+  "permissions": ["storage", "contextMenus", "activeTab"],
+  "host_permissions": ["<all_urls>"],
+
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["shared/chaos.js", "shared/prompts.js", "content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Over-Correct"
+  },
+
+  "commands": {
+    "overcorrect": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+O",
+        "mac":     "Command+Shift+O"
+      },
+      "description": "Apply Over-Correct to focused text field"
+    }
+  }
+}

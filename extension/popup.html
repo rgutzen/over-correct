@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Over-Correct</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+
+  <header>
+    <h1><span class="crossed">Auto</span> Over-Correct</h1>
+    <button class="gear" id="gear-btn" title="Settings">⚙</button>
+  </header>
+
+  <!-- Dial -->
+  <section class="dial-section">
+    <div class="dial-labels">
+      <span class="chaos">◀ chaos</span>
+      <span class="neutral">·</span>
+      <span class="hallucinate">hallucinate ▶▶</span>
+    </div>
+    <input type="range" id="dial" min="-10" max="10" step="0.1" value="1">
+    <div class="mode-row">
+      <span id="mode-label" class="mode-label">standard autocorrect</span>
+    </div>
+  </section>
+
+  <!-- Apply button -->
+  <button class="apply-btn" id="apply-btn">Apply to page ↵</button>
+
+  <!-- Settings (hidden by default) -->
+  <section class="settings" id="settings" hidden>
+    <div class="setting-row">
+      <label>API type</label>
+      <select id="api-type">
+        <option value="anthropic">Anthropic (Claude)</option>
+        <option value="openai">OpenAI-compatible</option>
+      </select>
+    </div>
+    <div class="setting-row">
+      <label>API key</label>
+      <input type="password" id="api-key" placeholder="sk-ant-…  or  sk-or-…">
+    </div>
+    <div class="setting-row" id="row-url">
+      <label>Base URL</label>
+      <input type="text" id="api-url" placeholder="http://localhost:11434/v1">
+    </div>
+    <div class="setting-row">
+      <label>Model</label>
+      <input type="text" id="api-model" placeholder="claude-haiku-4-5-20251001">
+    </div>
+    <button class="save-btn" id="save-btn">Save</button>
+    <p class="hint">
+      <strong>Anthropic:</strong> direct API — works with any <code>sk-ant-…</code> key.<br>
+      <strong>OpenAI-compat:</strong> Ollama, OpenRouter, Groq, etc.<br>
+      Shortcut: <kbd>Ctrl+Shift+O</kbd> (or ⌘⇧O)
+    </p>
+  </section>
+
+  <script src="popup.js"></script>
+</body>
+</html>
