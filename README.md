@@ -4,7 +4,7 @@
 
 Over-Correct is a text tool built for a **[Stupid Hackathon](https://itp.nyu.edu/itp/event-itp-ima-stupid-hackathon-2026/)**. It takes the familiar concept of autocorrect and attaches a dial — then turns that dial way past where any reasonable person would stop.
 
-<video src="https://github.com/rgutzen/over-correct/raw/main/demo.mp4" controls></video>
+<video src="https://github.com/user-attachments/assets/923e37b1-757f-48a8-bc3c-e23fd5099c3d" controls></video>
 
 ---
 
