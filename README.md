@@ -4,6 +4,8 @@
 
 Over-Correct is a text tool built for a **[Stupid Hackathon](https://itp.nyu.edu/itp/event-itp-ima-stupid-hackathon-2026/)**. It takes the familiar concept of autocorrect and attaches a dial — then turns that dial way past where any reasonable person would stop.
 
+<video src="demo.mp4" controls width="100%"></video>
+
 ---
 
 ## The Dial

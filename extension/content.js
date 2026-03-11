@@ -292,14 +292,8 @@ vdial.addEventListener('input', async () => {
 popover.addEventListener('pointerdown', (e) => e.stopPropagation());
 popover.addEventListener('click',       (e) => e.stopPropagation());
 
-document.addEventListener('click', () => {
-  popover.classList.remove('open');
-  setTimeout(hideBadge, 400);
-});
-document.addEventListener('contextmenu', () => {
-  popover.classList.remove('open');
-  setTimeout(hideBadge, 400);
-});
+document.addEventListener('click',       () => popover.classList.remove('open'));
+document.addEventListener('contextmenu', () => popover.classList.remove('open'));
 
 // ─── Update badge dot color when dial changes ──────────────────────
 async function syncDotColor() {
